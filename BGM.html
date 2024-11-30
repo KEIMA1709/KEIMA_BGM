@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEIMA_BGM</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(180deg, #654c4f 0%, #2b2b2b 100%);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .player {
+            text-align: center;
+            background-color: #121212;
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .info {
+            margin-top: 15px;
+        }
+
+        .song-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .artist {
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .play-button, .prev-button, .next-button {
+            background-color: #3e3e3e;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin: 0 10px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .play-button:hover, .prev-button:hover, .next-button:hover {
+            background-color: #575757;
+        }
+
+        .seek-bar {
+            margin-top: 20px;
+        }
+
+        .seek-bar input {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 5px;
+            background: #555;
+            outline: none;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .seek-bar input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #3e3e3e;
+            cursor: pointer;
+        }
+
+        .time {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #bbb;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="player">
+        <div class="thumbnail">
+            <img src="https://i.pinimg.com/originals/ef/6a/61/ef6a6172c5812b64726a0dea24586992.png" alt="曲サムネイル">
+        </div>
+        <div class="info">
+            <h2 class="song-title">アンコール</h2>
+            <p class="artist">YOASOBI</p>
+        </div>
+        <div class="seek-bar">
+            <input id="seek" type="range" value="0" step="1">
+            <div class="time">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="prev-button">l◀</button>
+            <button class="play-button" onclick="togglePlay()">▶︎</button>
+            <button class="next-button">▶l</button>
+        </div>
+        <audio id="audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playButton = document.querySelector('.play-button');
+        const seekBar = document.getElementById('seek');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const durationDisplay = document.getElementById('duration');
+
+        // 再生/一時停止
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playButton.textContent = '⬜';
+            } else {
+                audio.pause();
+                playButton.textContent = '▶︎';
+            }
+        }
+
+        // シークバー更新
+        audio.addEventListener('timeupdate', () => {
+            seekBar.value = (audio.currentTime / audio.duration) * 100 || 0;
+            currentTimeDisplay.textContent = formatTime(audio.currentTime);
+        });
+
+        // シークバーで再生位置を変更
+        seekBar.addEventListener('input', () => {
+            audio.currentTime = (seekBar.value / 100) * audio.duration;
+        });
+
+        // 音声の読み込み完了時
+        audio.addEventListener('loadedmetadata', () => {
+            durationDisplay.textContent = formatTime(audio.duration);
+        });
+
+        // 時間フォーマット
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+    </script>
+</body>
+</html>
